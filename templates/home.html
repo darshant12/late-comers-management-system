@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Teacher Portal</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>Faculty Dashboard</h2>
+    <p>Select a faculty to view their students:</p>
+    <div class="button-grid">
+      {% for key, subject in faculty_subjects.items() %}
+        <a class="btn" href="{{ url_for('teacher_dashboard', faculty=key) }}">{{ key.capitalize() }} ({{ subject }})</a>
+      {% endfor %}
+    </div>
+    <p><a href="{{ url_for('student_form') }}">Student Portal</a></p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ faculty }}'s Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>{{ faculty }} — {{ subject }}</h2>
+    <a href="{{ url_for('teacher_home') }}" class="btn back">⬅ Back</a>
+    
+    {% if entries %}
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>USN</th>
+        <th>Name</th>
+        <th>Class</th>
+        <th>Minutes Late</th>
+        <th>Reason</th>
+        <th>Timestamp</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+      {% for row in entries %}
+      <tr>
+        <td>{{ row[0] }}</td>
+        <td>{{ row[1] }}</td>
+        <td>{{ row[2] }}</td>
+        <td>{{ row[3] }}</td>
+        <td>{{ row[7] }}</td>
+        <td>{{ row[6] }}</td>
+        <td>{{ row[8] }}</td>
+        <td>
+          {% if row[9] == "Pending" %}
+            <span class="badge pending">Pending</span>
+          {% elif row[9] == "Noted" %}
+            <span class="badge noted">Noted</span>
+          {% else %}
+            <span class="badge absent">Absent</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if row[9] == "Pending" %}
+            <a href="{{ url_for('update_status', faculty=faculty.lower(), id=row[0]) }}" class="btn small">Mark Noted</a>
+          {% else %}
+            —
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+      <p>No entries for this subject yet.</p>
+    {% endif %}
+  </div>
+</body>
+</html>
