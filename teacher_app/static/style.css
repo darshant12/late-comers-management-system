@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #004e92, #000428);
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 30px 40px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 800px;
+  text-align: center;
+}
+
+h2 {
+  color: #002b5c;
+}
+
+.btn {
+  background: linear-gradient(135deg, #004e92, #000428);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s;
+  display: inline-block;
+  margin: 8px;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.button-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th {
+  background-color: #002b5c;
+  color: white;
+  padding: 10px;
+}
+
+td {
+  background-color: #f8faff;
+  padding: 10px;
+}
+
+tr:nth-child(even) td {
+  background-color: #edf3ff;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 15px;
+  color: white;
+  font-size: 13px;
+}
+
+.badge.pending {
+  background-color: #ffc107;
+}
+
+.badge.noted {
+  background-color: #28a745;
+}
+
+.badge.absent {
+  background-color: #dc3545;
+}
+
+.btn.back {
+  float: left;
+  margin-bottom: 10px;
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Late Comer Submission</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <script>
+        // ✅ Function to show alert when form is submitted
+        function showSuccessMessage() {
+            alert("✅ Form submitted successfully!");
+            return true; // allow the form to actually submit
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Late Comer Submission Form</h2>
+        <form action="/submit" method="POST" onsubmit="return showSuccessMessage()">
+            
+            <input type="text" name="usn" placeholder="Enter USN (e.g., 2SD22CS045)" required><br>
+            <input type="text" name="name" placeholder="Your Name" required><br>
+            <input type="text" name="class" placeholder="Class (e.g., CSE 3A)" required><br>
+
+            <label>Faculty:</label>
+            <select name="faculty" required>
+                <option value="">-- Select Faculty --</option>
+                {% for f in faculties %}
+                    <option value="{{ f.name }}">{{ f.name }}</option>
+                {% endfor %}
+            </select><br>
+
+            <label>Subject:</label>
+            <select name="subject" required>
+                <option value="">-- Select Subject --</option>
+                {% for f in faculties %}
+                    <option value="{{ f.subject }}">{{ f.subject }}</option>
+                {% endfor %}
+            </select><br>
+
+            <input type="number" name="minutes" placeholder="Minutes Late" required><br>
+            <textarea name="reason" placeholder="Reason for being late" required></textarea><br>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <p class="note">
+            ⏱️ If you are more than <b>35 minutes late</b>, you will be marked as <b>Absent</b>.
+        </p>
+    </div>
+</body>
+</html>

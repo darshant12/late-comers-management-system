@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Teacher Dashboard Home</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Faculty Dashboard</h2>
+    <p>Select a faculty to view their students:</p>
+    <div class="button-grid">
+      {% for key, subject in faculty_subjects.items() %}
+        <a class="btn" href="/{{ key }}">{{ key.capitalize() }} ({{ subject }})</a>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+</html>
