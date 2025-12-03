@@ -14,14 +14,6 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 DB_PATH = r"C:\Users\darsh\Desktop\late-comers-management-system\latecomers.db"
 print("✅ Using Database:", DB_PATH)
 
-# Faculty-Subject mapping (faculty names + subjects)
-FACULTY_SUBJECTS = {
-    "prof. smith": {"faculty_name": "Dr. Smith", "subject": "Data Structures"},
-    "prof. priya": {"faculty_name": "Prof. Priya", "subject": "Database Management"},
-    "prof. ramesh": {"faculty_name": "Mr. Ramesh", "subject": "Computer Networks"},
-    "prof. kavya": {"faculty_name": "Ms. Kavya", "subject": "Operating Systems"}
-}
-
 
 # --------------------------------------------------------
 # DATABASE INITIALIZATION
@@ -30,6 +22,8 @@ def init_db():
     try:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
+        
+        # Create late_entries table
         c.execute('''
             CREATE TABLE IF NOT EXISTS late_entries (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -44,11 +38,65 @@ def init_db():
                 status TEXT
             )
         ''')
+        
+        # Create faculties table
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS faculties (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                faculty_key TEXT UNIQUE NOT NULL,
+                faculty_name TEXT NOT NULL,
+                subject TEXT NOT NULL
+            )
+        ''')
+        
+        # Insert default faculty data if table is empty
+        c.execute('SELECT COUNT(*) FROM faculties')
+        if c.fetchone()[0] == 0:
+            default_faculties = [
+                ("dr. smith", "Dr. Smith", "Data Structures"),
+                ("prof. priya", "Prof. Priya", "Database Management"),
+                ("mr. ramesh", "Mr. Ramesh", "Computer Networks"),
+                ("ms. kavya", "Ms. Kavya", "Operating Systems")
+            ]
+            c.executemany('INSERT INTO faculties (faculty_key, faculty_name, subject) VALUES (?, ?, ?)', 
+                         default_faculties)
+            logging.info("✅ Inserted default faculty data")
+        
         conn.commit()
         conn.close()
         logging.info("✅ Database ready at: %s", DB_PATH)
     except Exception:
         logging.exception("❌ Database initialization failed")
+
+
+def get_all_faculties():
+    """Fetch all faculties from the database"""
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute('SELECT faculty_key, faculty_name, subject FROM faculties')
+        faculties = {row[0]: {"faculty_name": row[1], "subject": row[2]} for row in c.fetchall()}
+        conn.close()
+        return faculties
+    except Exception:
+        logging.exception("❌ Failed to fetch faculties")
+        return {}
+
+
+def get_faculty_info(faculty_key):
+    """Fetch a specific faculty's information from the database"""
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute('SELECT faculty_name, subject FROM faculties WHERE faculty_key=?', (faculty_key.lower(),))
+        row = c.fetchone()
+        conn.close()
+        if row:
+            return {"faculty_name": row[0], "subject": row[1]}
+        return None
+    except Exception:
+        logging.exception("❌ Failed to fetch faculty info")
+        return None
 
 
 # --------------------------------------------------------
@@ -65,14 +113,16 @@ def health():
 @app.route('/')
 def home():
     """Home page to select faculty"""
-    return render_template('home.html', faculty_subjects={k: v['subject'] for k, v in FACULTY_SUBJECTS.items()})
+    faculties = get_all_faculties()
+    faculty_subjects = {k: v['subject'] for k, v in faculties.items()}
+    return render_template('home.html', faculty_subjects=faculty_subjects)
 
 
 @app.route('/<faculty>')
 def teacher_dashboard(faculty):
     """Display latecomer entries for a given faculty"""
-    info = FACULTY_SUBJECTS.get(faculty.lower())
-    print(faculty)
+    info = get_faculty_info(faculty)
+    
     if not info:
         return "❌ Invalid faculty access!", 403
 
@@ -100,8 +150,8 @@ def teacher_dashboard(faculty):
 @app.route('/update/<faculty>/<int:id>')
 def update_status(faculty, id):
     """Update student's status to 'Noted' (only if not Absent)"""
-    info = FACULTY_SUBJECTS.get(faculty.lower())
-    print(faculty)
+    info = get_faculty_info(faculty)
+    
     if not info:
         return "❌ Invalid faculty access!", 403
 
